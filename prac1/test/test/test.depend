@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1476642440 source:d:\aga\documents\studia informatyka uwr\wdpc\prac1\test\test\main.c
+	<stdio.h>
+	<limits.h>
+	<math.h>
+

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <limits.h>
+
+int suma_dzielnikow(int n){
+    long long int sum = 1;
+    int i = 2;
+
+    while (i <= n/2 && (sum+i<=INT_MAX)){
+        if (n%i == 0){
+            sum += i;
+        }
+        i++;
+    }
+    return sum;
+}
+
+int obfita(int n){
+    if (suma_dzielnikow(n) > n) return 1;
+    else return 0;
+}
+
+int main(void){
+
+    int m = 0;
+    scanf("%d", &m);
+
+    int found = 0;
+    int p = 0, q = 0;
+
+    m++;
+    //for (int i=m+1; m<INT_MAX; m++){
+    while (found<2 && m<=INT_MAX && m>=0){
+        if (obfita(m)){
+                if (m%2==0){ // jesli parzysta
+                    if (p==0){
+                        p = m;
+                        found++;
+                        }
+                }
+                else
+                    if (q == 0){
+                    q = m;
+                    found++;
+                }
+            }
+        m++;
+        //if (found==2) break;
+    }
+
+
+    if (found == 2){
+        printf("%d %d\n", p, q);
+    }
+    else if (found == 0){
+        printf("BRAK BRAK\n");
+    }
+    else {
+        if (p == 0) printf("BRAK %d\n", q);
+        else printf("%d BRAK\n", p);
+    }
+
+
+
+    return 0;
+}
