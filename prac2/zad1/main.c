@@ -8,10 +8,10 @@
 int pozostale(int c){
     if (c >= 'A' && c <= 'Z')
             c=c-'A'+'a';
-        else if (c >= 'a' && c <= 'z')
-            c=c-'a'+'A';
-        else if (c == ' ')
-            c='!';
+    else if (c >= 'a' && c <= 'z')
+        c=c-'a'+'A';
+    else if (c == ' ')
+        c='!';
     return c;
 }
 
