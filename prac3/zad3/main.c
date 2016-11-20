@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX_LEN 65536
+//#define MAX_LEN 65536
+#define MAX_LEN 1024
+
 int size=0;
 int board[20][20]={{0}};
 
@@ -14,6 +16,24 @@ int read_file(int max, int file[]){
     }
     file[i]='\0';
     return i; // zwraca dlugosc wektora
+}
+
+int read_line(int max, int file[]){
+    int c, i;
+
+    for (i=0; i<max && ((c=getchar())!=EOF); i++){
+        file[i]=c;
+        if (c=='\n') break;
+    }
+
+    if (i==0 && c=='\n') return -1; // zwraca ze w linii jest tylko '\n'
+    else                 return i; // zwraca dlugosc linii
+}
+
+void clear_file(int n, int file[]){
+    for (int k=0; k<n; k++){
+        file[k]=0;
+    }
 }
 
 bool is_char(int n, char c, int file[]){
@@ -113,15 +133,19 @@ void draw_board(){
 
 int main(void){
     int n = 0;
+    int i = 0;
     int file[MAX_LEN]={0};
-    n = read_file(MAX_LEN, file);
+    //n = read_file(MAX_LEN, file);
 
-    //if (size==0)
-    int i=0;
-    i = find_size(n, file);
-
-    play(i, n, file);
-
+    while ( (n=read_line(MAX_LEN, file))!=0 ){ // n - dlugosc linii
+        if (n==-1) continue;
+        if (size==0) {
+            i = find_size(n, file); // i - nr pozycji na ktorej znajduje sie SZ[]
+            play(i, n, file);
+        }
+        else play(0, n, file);
+        clear_file(n,file);
+    }
     draw_board();
 
     return 0;
