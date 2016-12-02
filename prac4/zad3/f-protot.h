@@ -1,3 +1,6 @@
+#ifndef FPROT_H
+#define FPROT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,3 +19,5 @@ void C_K_E(int A[], int n, int m);
 void C_K_L(int rowne[], int m);
 void Reorg(int A[], int mniejsze[], int n, int m);
 void C_S(int A[], int n, int m);
+
+#endif

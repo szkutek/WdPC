@@ -1,9 +1,13 @@
+//290207
+//lista 6
+//zadanie 2
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #define ROZMIAR_PLANSZY 8
-#define ILOSC_BOMB 10
+#define ILOSC_BOMB 6
 
 // TODO pokazac rozmieszczenie wszystkich bomb na koniec
 
@@ -13,22 +17,22 @@ int bomba=0;
 int bomby[ROZMIAR_PLANSZY+2][ROZMIAR_PLANSZY+2]={{0}};
 int widok_gry[ROZMIAR_PLANSZY+2][ROZMIAR_PLANSZY+2]={{0}};
 
-void rysuj_bomby(void);
 int rysuj_plansze(void);
 void losuj_bomby(void);
 int wczytaj_ruch(int *ptrx, int *ptry);
 void odkrywajRek(int x, int y);
 int wykonaj_ruch(void);
+void rysuj_bomby(void);
 
 
 int main(void){
     srand(time(NULL));
     int pozostale = ROZMIAR_PLANSZY*ROZMIAR_PLANSZY - ILOSC_BOMB;
     losuj_bomby();
-    puts("WIDOK BOMB");
-    rysuj_bomby();
+    //puts("WIDOK BOMB");
+    //rysuj_bomby();
 
-    puts("GRA");
+    puts("SAPER");
     while (!koniec_gry){
         pozostale = rysuj_plansze();
         if (pozostale){
@@ -37,16 +41,14 @@ int main(void){
         }
         else{
             koniec_gry=1;
-            puts("WYGRALES");
+            puts(" *** WYGRALES *** ");
         }
     }
     if (bomba){
         // TODO odkryj wszystkie bomby
         pozostale = rysuj_plansze();
-        puts("PRZEGRALES");
+        puts(" :( PRZEGRALES :( ");
     }
-
-
 
     return 0;
 }
@@ -54,16 +56,18 @@ int main(void){
 
 int rysuj_plansze(void){
     // first line
-    printf(" ");
+    printf("  |");
     for (int i=1; i<=ROZMIAR_PLANSZY; i++){
         printf(" %d", i);
     }
-//    // next
-    int noX=0;
-//    int maxX=0, maxO=0;
     puts("");
+    for (int i=0; i<=2*ROZMIAR_PLANSZY+2; i++){
+        printf("-");
+    }
+    puts("");
+    int noX=0;
     for (int i=1; i<=ROZMIAR_PLANSZY; i++){
-        printf("%d", i);
+        printf("%d |", i);
         for (int k=1; k<=ROZMIAR_PLANSZY; k++){
             switch (widok_gry[i][k]){
             case 0:
@@ -89,8 +93,6 @@ int rysuj_plansze(void){
 }
 
 void losuj_bomby(void){
-//    int bx[ILOSC_BOMB]={2,1};
-//    int by[ILOSC_BOMB]={2,1};
     int bx=0, by=0;
     int i=0;
     while (i<ILOSC_BOMB){
@@ -136,10 +138,10 @@ int wczytaj_ruch(int *ptrx, int *ptry){
 }
 
 void odkrywajRek(int x, int y){
-    // widok_gry[x][y]==-1 nieodkryte
-    // bomby[x][y]!=0 nie ma bomby
+    // widok_gry[x][y]==-1 - nieodkryte
+    // widok_gry[x][y]==0 - puste
 
-    if ( x>0 && x<=ROZMIAR_PLANSZY && y>0 && y<=ROZMIAR_PLANSZY && widok_gry[x][y]==-1 && bomby[x][y]!=-2){
+    if ( x>0 && x<=ROZMIAR_PLANSZY && y>0 && y<=ROZMIAR_PLANSZY && widok_gry[x][y]==-1 ){
         widok_gry[x][y] = bomby[x][y];
 
         if (widok_gry[x][y]==0) {
@@ -160,24 +162,18 @@ int wykonaj_ruch(void){
     int x=0, y=0;
     if (!wczytaj_ruch(&x,&y)) return 0;
 
-    widok_gry[x][y] = bomby[x][y];
-
-    if (widok_gry[x][y]==-2){
+    if (bomby[x][y]==-2){
+        widok_gry[x][y] = bomby[x][y];
         koniec_gry=1;
         bomba=1;
         return 0;
     }
 
-    if (widok_gry[x][y]==0){
-        odkrywajRek(x+1,y);
-        odkrywajRek(x,y+1);
-        odkrywajRek(x-1,y);
-        odkrywajRek(x,y-1);
-        odkrywajRek(x-1,y+1);
-        odkrywajRek(x-1,y-1);
-        odkrywajRek(x+1,y-1);
-        odkrywajRek(x+1,y+1);
+    if (bomby[x][y]==0){
+        odkrywajRek(x,y);
     }
+    else
+        widok_gry[x][y] = bomby[x][y];
 
     return 0;
 }
@@ -185,13 +181,17 @@ int wykonaj_ruch(void){
 
 void rysuj_bomby(void){
     // first line
-    printf(" ");
+    printf("  |");
     for (int i=1; i<=ROZMIAR_PLANSZY; i++){
         printf(" %d", i);
     }
     puts("");
+    for (int i=0; i<=2*ROZMIAR_PLANSZY+2; i++){
+        printf("-");
+    }
+    puts("");
     for (int i=1; i<=ROZMIAR_PLANSZY; i++){
-        printf("%d", i);
+        printf("%d |", i);
         for (int k=1; k<=ROZMIAR_PLANSZY; k++){
             switch (bomby[i][k]){
             case 0:
