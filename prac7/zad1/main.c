@@ -1,3 +1,5 @@
+//290207
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -5,11 +7,7 @@
 struct wezel{
     int x;
     struct wezel *lewy, *prawy;
-} ;
-
-
-
-//int szukaj(int a);
+};
 
 struct wezel *wstaw(struct wezel *wez, int wartosc){
 
@@ -40,16 +38,29 @@ void wypiszBST(struct wezel *wez) {
     }
 }
 
+int szukaj(int a, struct wezel *wez){
+    int i = 0;
+    while (wez != NULL){
+        if (a == (wez->x)) return i;
+
+        else if(a > (wez->x)) {
+            wez = wez->prawy;
+            i++;
+        }
+        else if(a < (wez->x)) {
+            wez = wez->lewy;
+            i++;
+        }
+    }
+
+    return -1;
+}
 
 int main(void){
 
     int n;
-//    int *wartosci;
-
     scanf("%d", &n);
-    //wartosci = (int *)calloc(n, sizeof(int));
     int x;
-    scanf("%d", &x);
 
     struct wezel *root=NULL;
     for (int i=0; i<n; i++){
@@ -57,15 +68,22 @@ int main(void){
         root = wstaw(root, x);
     }
 
-    wypiszBST(root);
+//    puts("Drzewo");
+//    wypiszBST(root);
 
-//    int q;
-//    int *zapytania;
-//    scanf("%d", &q);
-//    zapytania = (int *)calloc(n, sizeof(int));
-//    for (int i=0; i<q; i++){
-//        scanf(" %d", &(zapytania+i));
-//    }
+//    puts("");
+//    puts("Wyniki");
+
+    int q;
+    scanf("%d", &q);
+    int zapytanie;
+    int odp;
+    for (int i=0; i<q; i++){
+        scanf("%d", &zapytanie);
+        odp = szukaj(zapytanie,root);
+        if (odp==-1)    printf("wierzcholek %d nie istnieje\n", zapytanie);
+        else            printf("wierzcholek %d jest na glebokosci %d\n", zapytanie, odp);
+    }
 
     return 0;
 }

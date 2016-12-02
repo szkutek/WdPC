@@ -65,9 +65,8 @@ struct ulamek uprosc(struct ulamek a){
 
 void wypisz(struct ulamek a){
     a = uprosc(a);
-    if (a.l==a.m){
-        puts("1 ");
-    }
+    if (a.l==a.m) puts("1 ");
+    else if (a.l==0) puts("0 ");
     else if (a.l>a.m){
         int calk = a.l/a.m;
         int reszta = a.l % a.m;
@@ -80,7 +79,7 @@ void wypisz(struct ulamek a){
 
 void testuj(void){
     struct ulamek a,b,c,d;
-    a = utworz(1,2);
+    a = utworz(0,2);
     b = utworz(1,4);
     c = utworz(12,5);
     d = utworz(5,5);
