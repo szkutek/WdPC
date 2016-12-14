@@ -35,29 +35,32 @@ void print_map(void){
     }
 }
 
-int eval_move(int i, int j, int start_path){
+int eval_move(int i, int j, int start_path, int moves_num){
 
-    if (start_path==L) return 1;
+    if (start_path==L && moves_num==P && (mapa[i][j]=='.' || mapa[i][j]=='X')){
+        mapa[i][j] = 'X';
+        return 1;
+    }
 
-    switch (sekwencja[start_path]){
+    switch (sekwencja[start_path]){ // dodaj warunki zeby nie wyjsc poza mape!
         case 'G':
             if ((mapa[i-1][j  ]=='.' || mapa[i-1][j  ] =='X') )
-                if (eval_move(i-1, j  , start_path+1)) mapa[i-1][j  ]='X';
+                eval_move(i-1, j  , start_path+1, moves_num+1);
             break;
         case 'D':
             if ((mapa[i+1][j  ]=='.' || mapa[i+1][j  ] =='X') )
-                if (eval_move(i+1, j  , start_path+1)) mapa[i+1][j  ]='X';
+                eval_move(i+1, j  , start_path+1, moves_num+1);
             break;
         case 'L':
-            if ((mapa[i  ][j-1]=='.' || mapa[i-1][j-1] =='X') )
-                if (eval_move(i  , j-1, start_path+1)) mapa[i  ][j-1]='X';
+            if ((mapa[i  ][j-1]=='.' || mapa[i  ][j-1] =='X') )
+                eval_move(i  , j-1, start_path+1, moves_num+1);
             break;
         case 'P':
-            if ((mapa[i  ][j+1]=='.' || mapa[i-1][j+1] =='X') )
-                if (eval_move(i  , j+1, start_path+1)) mapa[i  ][j+1]='X';
+            if ((mapa[i  ][j+1]=='.' || mapa[i  ][j+1] =='X') )
+                eval_move(i  , j+1, start_path+1, moves_num+1);
             break;
         case 'S':
-                if (eval_move(i  , j  , start_path+1)) mapa[i  ][j  ]='X';
+                eval_move(i  , j  , start_path+1, moves_num);
             break;
 //        case '?':
 //
@@ -86,7 +89,7 @@ int find_endpoint(){
     for (int i=0; i<M; i++){
         for (int j=0; j<N; j++){
             if (mapa[i][j]=='.' || mapa[i][j]=='X'){
-                eval_move(i,j,0);
+                eval_move(i,j,0, 0);
             }
         }
     }
