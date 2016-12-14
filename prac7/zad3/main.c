@@ -19,16 +19,12 @@ int L=0; // dlugosc sekwencji
 PUNKT mapa[MAXN][MAXN+1];
 char sekwencja[MAXN+1]={0};
 
-int directions[4] = { 0, 0, 0, 0};
-                //   G  D  L  P
-
 
 void read_data(void){
 
     scanf("%d ", &N);
     scanf("%d ", &M);
 
-//    for (int i=0; i<M; i++){    scanf("%s", mapa[i]);    }
     for (int i=0; i<M; i++){
         for (int j=0; j<N+1; j++){
             mapa[i][j].wart = getchar();
@@ -40,11 +36,6 @@ void read_data(void){
     scanf("%d", &L);
 
     scanf("%s", sekwencja);
-//    char *s = sekwencja;
-//    for (int i=0; i<L; i++, s++){
-//        *s = getchar();
-//    }
-//    *s = '\0';
 }
 
 void print_map(void){
@@ -58,12 +49,15 @@ void print_map(void){
 
 int eval_move(int i, int j, int start_path, int moves_num){
 
-    if (start_path==L && moves_num==P){
+    if ( i<0 || i>=M || j<0 || j>=N ) return 0; // warunek zeby nie wyjsc poza mape
+
+
+    if (start_path==L && moves_num==P){ // koniec sciezki
         mapa[i][j].wart = 'X';
         return 1;
     }
 
-    switch (sekwencja[start_path]){ // dodaj warunki zeby nie wyjsc poza mape!
+    switch (sekwencja[start_path]){
         case 'G':
             if ((mapa[i-1][j  ].wart=='.' || mapa[i-1][j  ].wart =='X') && !mapa[i-1][j  ].G ){
                  mapa[i-1][j  ].G = 1;
