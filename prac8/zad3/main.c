@@ -42,6 +42,17 @@ KWADRAT *wstaw(KWADRAT *wezel, int i_pocz, int i_kon, int j_pocz, int j_kon){
     return wezel;
 }
 
+
+void usun(KWADRAT *wezel){
+    if (wezel->A!=NULL){
+        usun(wezel->A);
+        usun(wezel->B);
+        usun(wezel->C);
+        usun(wezel->D);
+    }
+    free(wezel);
+}
+
 void wypisz_tab(int n){
     for (int i=0; i<n; i++){
         for (int j=0; j<n; j++) printf("%d", tab_wartosci[i][j]);
@@ -49,11 +60,37 @@ void wypisz_tab(int n){
     }
 }
 
+void rotacja(KWADRAT *wezel, char slowo[], int i){ // *ABC
+    if (slowo[i+1]==0){
+        KWADRAT *tmp;
+        tmp = wezel->A;
+
+        wezel->A = wezel->D;
+        wezel->D = wezel->C;
+        wezel->C = wezel->B;
+        wezel->B = tmp;
+
+    }
+    else
+        switch (slowo[i]){
+            case 'A':
+                rotacja(wezel->A, slowo, i+1);
+                break;
+            case 'B':
+                rotacja(wezel->B, slowo, i+1);
+                break;
+            case 'C':
+                rotacja(wezel->C, slowo, i+1);
+                break;
+            case 'D':
+                rotacja(wezel->D, slowo, i+1);
+                break;
+    }
+}
 
 
 
-
-void negacja(KWADRAT *wezel, char slowo[], int i){ // *ABC
+void negacja(KWADRAT *wezel, char slowo[], int i){ // -ABC
     if (wezel->A == NULL){
         if      (wezel->wartosc == 0) wezel->wartosc = 1;
         else if (wezel->wartosc == 1) wezel->wartosc = 0;
@@ -139,12 +176,10 @@ int main(void){
     obrazek = wstaw(obrazek, 0, n-1, 0, n-1);
 
 
-
-
-    // CZYTAJ INSTRUKCJE
     char slowo[MAXLOGN+2]={0};
     int s=0;
     while ( c != '.'){
+        // CZYTAJ INSTRUKCJE
         while ((c=getchar()) != '\n'){
             slowo[s] = (czy_mala(c)) ? c+'A'-'a': c;
             s++;
@@ -153,7 +188,7 @@ int main(void){
         wykonaj_instr(obrazek, slowo);
 
         // WYCZYSC slowo i s
-        for (int i=0; i<=s; i++) slowo[i]=0;
+        for (int i=0; i<=MAXLOGN; i++) slowo[i]=0;
         s=0;
     }
 
