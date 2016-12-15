@@ -88,8 +88,6 @@ void rotacja(KWADRAT *wezel, char slowo[], int i){ // *ABC
     }
 }
 
-
-
 void negacja(KWADRAT *wezel, char slowo[], int i){ // -ABC
     if (wezel->A == NULL){
         if      (wezel->wartosc == 0) wezel->wartosc = 1;
@@ -113,6 +111,46 @@ void negacja(KWADRAT *wezel, char slowo[], int i){ // -ABC
     }
 }
 
+void zero(KWADRAT *wezel, char slowo[], int i){ // 0ABC
+    if (wezel->A == NULL) wezel->wartosc = 0;
+    else {
+        switch (slowo[i]){
+        case 'A':
+            zero(wezel->A, slowo, i+1);
+            break;
+        case 'B':
+            zero(wezel->B, slowo, i+1);
+            break;
+        case 'C':
+            zero(wezel->C, slowo, i+1);
+            break;
+        case 'D':
+            zero(wezel->D, slowo, i+1);
+            break;
+        }
+    }
+}
+
+void jeden(KWADRAT *wezel, char slowo[], int i){ // 1ABC
+    if (wezel->A == NULL) wezel->wartosc = 1;
+    else {
+        switch (slowo[i]){
+        case 'A':
+            jeden(wezel->A, slowo, i+1);
+            break;
+        case 'B':
+            jeden(wezel->B, slowo, i+1);
+            break;
+        case 'C':
+            jeden(wezel->C, slowo, i+1);
+            break;
+        case 'D':
+            jeden(wezel->D, slowo, i+1);
+            break;
+        }
+    }
+}
+
 
 
 
@@ -128,12 +166,12 @@ void wykonaj_instr(KWADRAT *wezel, char slowo[]){
     case '-':
         negacja(wezel, slowo, 1);
         break;
-//    case '0':
-//        zero(wezel, slowo, 1);
-//        break;
-//    case '1':
-//        jeden(wezel, slowo, 1);
-//        break;
+    case '0':
+        zero(wezel, slowo, 1);
+        break;
+    case '1':
+        jeden(wezel, slowo, 1);
+        break;
 //    case '=':
 //        roznorodnosc(wezel, slowo, 1);
 //        break;
