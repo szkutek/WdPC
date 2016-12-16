@@ -151,7 +151,53 @@ void jeden(KWADRAT *wezel, char slowo[], int i){ // 1ABC
     }
 }
 
+int roznorodnosc(KWADRAT *wezel, char slowo[], int i){ // =ABC
+    // 0 gdy same 0 (roznorodnosc = 1)
+    // 1 gdy same 1 (roznorodnosc = 1)
+    // k gdy rozne (roznorodnosc = k)
 
+    int res=0;
+    int resA, resB, resC, resD;
+
+    if (slowo[i+1]==0){
+        if (wezel->A==NULL) return wezel->wartosc;
+
+        else {
+            resA = roznorodnosc(wezel->A, slowo, i);
+            resB = roznorodnosc(wezel->B, slowo, i);
+            resC = roznorodnosc(wezel->C, slowo, i);
+            resD = roznorodnosc(wezel->D, slowo, i);
+
+            if      ( resA==0 && resB==0 && resC==0 && resD==0 ) return 0;
+            else if ( resA==1 && resB==1 && resC==1 && resD==1 ) return 1;
+            else {
+                resA = (resA==0) ? 1 : resA;
+                resB = (resB==0) ? 1 : resB;
+                resC = (resC==0) ? 1 : resC;
+                resD = (resD==0) ? 1 : resD;
+
+                return resA+resB+resC+resD;
+            }
+
+        }
+    }
+    else
+        switch (slowo[i]){
+        case 'A':
+            res = roznorodnosc(wezel->A, slowo, i+1);
+            break;
+        case 'B':
+            res = roznorodnosc(wezel->B, slowo, i+1);
+            break;
+        case 'C':
+            res = roznorodnosc(wezel->C, slowo, i+1);
+            break;
+        case 'D':
+            res = roznorodnosc(wezel->D, slowo, i+1);
+            break;
+    }
+    return res;
+}
 
 
 
@@ -172,13 +218,13 @@ void wykonaj_instr(KWADRAT *wezel, char slowo[]){
     case '1':
         jeden(wezel, slowo, 1);
         break;
-//    case '=':
-//        roznorodnosc(wezel, slowo, 1);
-//        break;
+    case '=':
+        printf("%d\n", roznorodnosc(wezel, slowo, 1));
+        break;
 //    case '#':
-//        szachownice(wezel, slowo, 1);
+//        printf("%d\n", szachownice(wezel, slowo, 1));
 //        break;
-//    }
+    }
 
 }
 
@@ -216,19 +262,21 @@ int main(void){
 
     char slowo[MAXLOGN+2]={0};
     int s=0;
-    while ( c != '.'){
+//    while ( c != '.'){
         // CZYTAJ INSTRUKCJE
         while ((c=getchar()) != '\n'){
+            if (c=='.') break;
             slowo[s] = (czy_mala(c)) ? c+'A'-'a': c;
             s++;
         }
+        printf("slowo: %s\n",slowo);
         // WYKONAJ OPERACJE
         wykonaj_instr(obrazek, slowo);
 
         // WYCZYSC slowo i s
         for (int i=0; i<=MAXLOGN; i++) slowo[i]=0;
         s=0;
-    }
+//    }
 
 
 
