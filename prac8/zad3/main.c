@@ -90,9 +90,17 @@ void rotacja(KWADRAT *wezel, char slowo[], int i){ // *ABC
 }
 
 void negacja(KWADRAT *wezel, char slowo[], int i){ // -ABC
-    if (wezel->A == NULL){
-        if      (wezel->wartosc == 0) wezel->wartosc = 1;
-        else if (wezel->wartosc == 1) wezel->wartosc = 0;
+    if (slowo[i]==0){
+        if (wezel->A == NULL){
+            if      (wezel->wartosc == 0) wezel->wartosc = 1;
+            else if (wezel->wartosc == 1) wezel->wartosc = 0;
+        }
+        else {
+            negacja(wezel->A, slowo, i);
+            negacja(wezel->B, slowo, i);
+            negacja(wezel->C, slowo, i);
+            negacja(wezel->D, slowo, i);
+        }
     }
     else {
         switch (slowo[i]){
@@ -113,7 +121,15 @@ void negacja(KWADRAT *wezel, char slowo[], int i){ // -ABC
 }
 
 void zero(KWADRAT *wezel, char slowo[], int i){ // 0ABC
-    if (wezel->A == NULL) wezel->wartosc = 0;
+    if (slowo[i]==0){
+        if (wezel->A == NULL) wezel->wartosc = 0;
+        else {
+            zero(wezel->A, slowo, i);
+            zero(wezel->B, slowo, i);
+            zero(wezel->C, slowo, i);
+            zero(wezel->D, slowo, i);
+        }
+    }
     else {
         switch (slowo[i]){
         case 'A':
@@ -133,7 +149,15 @@ void zero(KWADRAT *wezel, char slowo[], int i){ // 0ABC
 }
 
 void jeden(KWADRAT *wezel, char slowo[], int i){ // 1ABC
-    if (wezel->A == NULL) wezel->wartosc = 1;
+    if (slowo[i]==0){
+        if (wezel->A == NULL) wezel->wartosc = 1;
+        else {
+            jeden(wezel->A, slowo, i);
+            jeden(wezel->B, slowo, i);
+            jeden(wezel->C, slowo, i);
+            jeden(wezel->D, slowo, i);
+        }
+    }
     else {
         switch (slowo[i]){
         case 'A':
@@ -202,6 +226,58 @@ int roznorodnosc(KWADRAT *wezel, char slowo[], int i){ // =ABC
 
 
 
+int szachownice(KWADRAT *wezel, char slowo[], int i){ // =ABC
+    // -2 gdy 0, -1 gdy 1, 1 gdy szachownica, 0, gdy brak szach.
+
+    int res=0;
+
+    if (slowo[i]==0){
+        if (wezel->A==NULL) return (wezel->wartosc==1) ? -1 : -2;
+
+        else {
+            int resA=0, resB=0, resC=0, resD=0;
+            resA = szachownice(wezel->A, slowo, i);
+            resB = szachownice(wezel->B, slowo, i);
+            resC = szachownice(wezel->C, slowo, i);
+            resD = szachownice(wezel->D, slowo, i);
+
+            if      ( resA==1 && resB==1 && resC==1 && resD==1 ) return -1;
+            else if ( resA==0 && resB==0 && resC==0 && resD==0 ) return -2;
+
+            else if ( (resA==-2 && resB==-1 && resA==resC && resB==resD)
+                    ||(resA==-1 && resB==-2 && resA==resC && resB==resD)) return 1;
+
+            else {
+                resA = (resA<0) ? 0 : resA;
+                resB = (resB<0) ? 0 : resB;
+                resC = (resC<0) ? 0 : resC;
+                resD = (resD<0) ? 0 : resD;
+
+                return resA+resB+resC+resD;
+            }
+
+        }
+    }
+    else
+        switch (slowo[i]){
+        case 'A':
+            res = szachownice(wezel->A, slowo, i+1);
+            break;
+        case 'B':
+            res = szachownice(wezel->B, slowo, i+1);
+            break;
+        case 'C':
+            res = szachownice(wezel->C, slowo, i+1);
+            break;
+        case 'D':
+            res = szachownice(wezel->D, slowo, i+1);
+            break;
+    }
+    return res;
+}
+
+
+
 
 
 
@@ -222,9 +298,9 @@ void wykonaj_instr(KWADRAT *wezel, char slowo[]){
     case '=':
         printf("%d\n", roznorodnosc(wezel, slowo, 1));
         break;
-//    case '#':
-//        printf("%d\n", szachownice(wezel, slowo, 1));
-//        break;
+    case '#':
+        printf("%d\n", szachownice(wezel, slowo, 1));
+        break;
     }
 
 }
@@ -288,8 +364,7 @@ int main(void){
 
     // STWORZ DRZEWO
     obrazek = wstaw(0, n-1, 0, n-1);
-    //wypisz_fragm(obrazek, "2\0\0", 1);
-
+    //wypisz_fragm(obrazek, "2A", 1); puts("");
 
 
     char slowo[MAXLOGN+2]={0};
@@ -304,6 +379,7 @@ int main(void){
 
         // WYKONAJ OPERACJE
         wykonaj_instr(obrazek, slowo);
+        wypisz_fragm(obrazek, "2A", 1); puts("");
 
         // WYCZYSC slowo i s
         for (int i=0; i<=MAXLOGN; i++) slowo[i]=0;
