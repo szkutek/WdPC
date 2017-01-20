@@ -1,9 +1,5 @@
 #include "gui.h"
 
-#define WIDTH 10
-#define HEIGHT 10
-//#define WIDTH 3
-//#define HEIGHT 2
 
 //void create_board(GtkWidget *widget){
 //}
@@ -18,9 +14,9 @@ void button_clicked(GtkWidget *widget, gpointer data) {
 
 }
 
-int random_candy() {
-    return 1 + rand() % (6);
-}
+//int random_candy() {
+//    return 1 + rand() % (6);
+//}
 
 
 int gui_main(void) {
@@ -49,7 +45,6 @@ int gui_main(void) {
     gint size = 50;
 
     int candy[HEIGHT][WIDTH] = {{0}};
-    char candy_labels[HEIGHT][WIDTH] = {{0}};
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             candy[i][j] = random_candy();

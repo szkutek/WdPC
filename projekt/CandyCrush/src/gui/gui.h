@@ -16,7 +16,7 @@
 //}
 
 void button_clicked(GtkWidget *widget, gpointer data);
-int random_candy();
+//int random_candy();
 int gui_main();
 
 
