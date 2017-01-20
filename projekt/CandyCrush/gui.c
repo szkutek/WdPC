@@ -1,3 +1,4 @@
+
 #include "gui.h"
 
 #define WIDTH 10
@@ -8,7 +9,12 @@
 //void create_board(GtkWidget *widget){
 //}
 
-static void on_button_click(){
+ void button_clicked(GtkWidget *widget, gpointer data){
+    printf("Clicked\n");
+    gtk_button_set_label(widget, "C");
+    GdkColor col = {0, 27000, 30000, 35000};
+    gtk_widget_override_background_color(widget, GTK_STATE_PRELIGHT, &col);
+
 }
 
 int random_candy(){
@@ -17,20 +23,6 @@ int random_candy(){
 
 
 int gui_main(void){
-
-
-//    GtkWidget *main_window;
-//    GtkWidget *main_hbox;
-//    GtkWidget *menu;
-//    GtkWidget *board;
-//    GtkWidget *board_buttons[HEIGHT][WIDTH];
-//
-//    GtkWidget *time_lbl;
-//    GtkWidget *time_count;
-//    GtkWidget *lives_lbl;
-//    GtkWidget *lives;
-//    GtkWidget *score_lbl;
-//    GtkWidget *score;
 
     main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -77,12 +69,13 @@ int gui_main(void){
             sprintf(str, "%d", candy[i][j]);
 
 //            board_buttons[i][j] = gtk_color_button_new();
+//            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
+
             board_buttons[i][j] = gtk_button_new_with_label(str);
             gtk_table_attach_defaults(GTK_TABLE(board), board_buttons[i][j], j, j+1, i, i+1);
 
-//            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
-            g_signal_connect(G_OBJECT(board_buttons[i][j]), "button_press_event",
-                             G_CALLBACK(on_button_click), NULL);
+            g_signal_connect(G_OBJECT(board_buttons[i][j]), "clicked",
+                             G_CALLBACK(button_clicked), NULL);
 
             gtk_widget_set_size_request( board_buttons[i][j], size, size);
         }

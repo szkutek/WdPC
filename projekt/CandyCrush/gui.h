@@ -1,3 +1,4 @@
+
 #ifndef GUI_H
 #define GUI_H
 
@@ -14,7 +15,7 @@
 //void create_board(GtkWidget *widget){
 //}
 
-static void on_button_click();
+void button_clicked(GtkWidget *widget, gpointer data);
 int random_candy();
 int gui_main();
 
