@@ -1,103 +1,169 @@
+
 #include "model.h"
-
-int koniec_gry=0;
-int candy[HEIGHT][WIDTH] = {{0}};
+#include "../types.h"
 
 
-int random_candy(){
+int random_candy() {
     return 1 + rand() % (6);
 }
 
-void draw_board(){
+void draw_board() {
     printf("  |");
-    for (int i=0; i<HEIGHT; i++){
+    for (int i = 0; i < HEIGHT; i++) {
         printf(" %d", i);
     }
     puts("");
-    for (int i=0; i<2*HEIGHT+2; i++){
+    for (int i = 0; i < 2 * HEIGHT + 2; i++) {
         printf("-");
     }
     puts("");
-    for (int i=0; i<HEIGHT; i++){
+    for (int i = 0; i < HEIGHT; i++) {
         printf("%d |", i);
-        for (int j=0; j<WIDTH; j++){
-            printf(" %d", candy[i][j]);
+        for (int j = 0; j < WIDTH; j++) {
+            printf(" %d", candies[i][j].color);
         }
         puts("");
     }
     puts("");
 }
 
+bool in_board(int x, int y) {
+    return (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT);
+}
 
-int read_move(int *ptrx, int *ptry, int *dir){
-    puts("Podaj wspolrzedne x i y oraz kierunek (2 4 6 8), aby zamienic cukierki");
-    scanf("%d %d %d", ptrx, ptry, dir);
 
-    while ( *ptrx<0 || *ptrx>=WIDTH || *ptry<0 || *ptry>=HEIGHT){
-        if (*ptrx==-1 && *ptry==-1){
-            koniec_gry=1;
+int read_move(int *ptrx1, int *ptry1, int *ptrx2, int *ptry2) {
+    puts("Podaj wspolrzedne (x1,y1) oraz (x2,y2), aby zamienic te cukierki:");
+    scanf("%d %d %d %d", ptrx1, ptry1, ptrx2, ptry2);
+
+    while (!in_board(*ptrx1, *ptry1) || !in_board(*ptrx2, *ptry2)) {
+        if (*ptrx1 == -1 && *ptry1 == -1) {
+//            koniec_gry=1;
             return 0;
         }
-        puts("Podaj poprawne wspolrzedne lub wpisz '0 0' aby zakonczyc gre");
-        scanf("%d %d %d", ptrx, ptry, dir);
+        puts("Podaj poprawne wspolrzedne lub wpisz '-1 -1 0 0' aby zakonczyc gre");
+        scanf("%d %d %d %d", ptrx1, ptry1, ptrx2, ptry2);
     }
     return 1;
 }
 
-int switch_candy(int x, int y, int dir) {
-    int pom;
-    if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-        switch (dir) {
-            case 2:
-                if (x == HEIGHT - 1) return 0;
-                pom = candy[x][y];
-                candy[x][y] = candy[x + 1][y];
-                candy[x + 1][y] = pom;
-                break;
-            case 8:
-                if (x == 0) return 0;
-                pom = candy[x][y];
-                candy[x][y] = candy[x - 1][y];
-                candy[x + 1][y] = pom;
-                break;
-            case 4:
-                if (y == 0) return 0;
-                pom = candy[x][y];
-                candy[x][y] = candy[x][y - 1];
-                candy[x + 1][y] = pom;
-                break;
-            case 6:
-                if (y == WIDTH - 1) return 0;
-                pom = candy[x][y];
-                candy[x][y] = candy[x][y + 1];
-                candy[x + 1][y] = pom;
-                break;
+int neighbor_candy(int x1, int y1, int x2, int y2) {
+    return ((abs(x1 - x2) + abs(y1 - y2) == 1) && in_board(x1, y1) && in_board(x2, y2));
+}
+
+char swap_dir(int x1, int y1, int x2, int y2) {
+    char dir = 0;
+    if (x1 == x2) dir = (y1 < y2) ? ('r') : ('l');
+    else if (y1 == y2) dir = (x1 < x2) ? ('d') : ('u');
+    return dir;
+}
+
+int swap_candy(int x1, int y1, int x2, int y2) { //zmienia cukierki miejscami, jesli sa obok siebie
+    int pom_color;
+    int pom_special;
+    if (neighbor_candy(x1, y1, x2, y2)) {
+        pom_color = candies[x1][y1].color;
+        candies[x1][y1].color = candies[x2][y2].color;
+        candies[x2][y2].color = pom_color;
+
+        pom_special = candies[x1][y1].special;
+        candies[x1][y1].special = candies[x2][y2].special;
+        candies[x2][y2].special = pom_special;
+        return 1;
+    } else return 0;
+}
+
+void undo_swap(int x1, int y1, int x2, int y2) {
+    swap_candy(x2, y2, x1, y1);
+}
+
+void clear_counted() {
+    for (int i = 0; i < WIDTH; i++) {
+        horizontal[i][1] = -1;
+        horizontal[i][2] = -1;
+    }
+    for (int i = 0; i < HEIGHT; i++) {
+        vertical[i][1] = -1;
+        vertical[i][2] = -1;
+    }
+}
+
+CandyCount count_candies(int x, int y) {
+    clear_counted();
+    int c = candies[x][y].color;
+
+    CandyCount count = {0, 0};
+
+    int i = x, j = y;
+
+    while (c == candies[i][j].color && i >= 0) {
+        vertical[count.x][1] = i;
+        vertical[count.x][2] = j;
+        count.x++;
+        i--;
+    }
+    i = x + 1;
+    while (c == candies[i][j].color && i < HEIGHT) {
+        vertical[count.x][1] = i;
+        vertical[count.x][2] = j;
+        count.x++;
+        i++;
+    }
+    i = x;
+    while (c == candies[i][j].color && j >= 0) {
+        horizontal[count.y][1] = i;
+        horizontal[count.y][2] = j;
+        count.y++;
+        j--;
+    }
+    j = y + 1;
+    while (c == candies[i][j].color && j < WIDTH) {
+        horizontal[count.y][1] = i;
+        horizontal[count.y][2] = j;
+        count.y++;
+        j++;
+    }
+    return count;
+}
+
+
+int check_one_candy(int x, int y) {
+
+//    if      (is_fig_T(x,y)) return 1;
+//    else if (is_fig_I(x,y)) return 1;
+//    else if (is_fig_L(x,y)) return 1;
+//    else if (is_fig_P(x,y)) return 1;
+//    else if (is_fig_H(x,y)) return 1;
+//    else if (is_fig_V(x,y)) return 1;
+
+
+
+
+
+    return 0;
+}
+
+int check_swap(int x1, int y1, int x2, int y2) {
+
+
+    return 1;
+}
+
+int make_move(int x1, int y1, int x2, int y2) {
+//    int x1=0, y1=0, x2=0, y2=0;
+//    if (!read_move(&x1,&y1,&x2,&y2)){
+////        koniec_gry=1;
+//        return 0;
+//    }
+
+//    if (!neighbor_candy(x1,y1,x2,y2)) return 0;
+//    int dir = swap_dir(x1,y1,x2,y2);
+
+    if (swap_candy(x1, y1, x2, y2)) {
+        if (!check_swap(x1, y1, x2, y2)) {
+            undo_swap(x1, y1, x2, y2);
+            return 0;
         }
-    }
-    return 1;
-}
-
-int check_rec(int x, int y, int dir){
-
-
-
-}
-
-int check_move(int x, int y, int dir){
-    int pom;
-
-    check_rec(x+1,y,dir);
-
-    return 1;
-}
-
-int make_move(void){
-    int x=0, y=0, dir=0;
-    if (!read_move(&x,&y,&dir)) return 0;
-
-    if (switch_candy(x,y,dir)) {
-        if (!check_move(x,y,dir))
-            undo_switch(x, y, dir);
     }
 
     return 0;
@@ -105,19 +171,26 @@ int make_move(void){
 
 int model_main() {
 
-
+    //init board
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
-            candy[i][j] = random_candy();
+            candies[i][j].color = random_candy();
+            candies[i][j].special = 0;
         }
     }
-    draw_board();
-    make_move();
+
 
 //    puts("Candy Crush");
 //    while (!koniec_gry) {
 //        draw_board();
+//        make_move();
 //    }
+    draw_board();
+//    make_move();
+//    draw_board();
+//    make_move();
+//    draw_board();
+
 
     return 0;
 }

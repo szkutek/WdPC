@@ -1,16 +1,49 @@
 #include "gui.h"
+#include "../types.h"
 
 
 //void create_board(GtkWidget *widget){
 //}
+GtkButton *firstButton = NULL;
+Point firstPoint;
+GtkButton *secondButton = NULL;
+Point secondPoint;
+
+
+void redraw() {
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+
+            char str[7];
+            sprintf(str, "%d", candies[i][j].color);
+            gtk_button_set_label(board_buttons[i][j], str);
+        }
+    }
+}
+
 
 void button_clicked(GtkWidget *widget, gpointer data) {
     Point *point = (Point *) data;
     printf("[%d, %d]\n", point->x, point->y);
+
+    if (firstButton == NULL) {
+        firstButton = widget;
+        firstPoint.x = point->x;
+        firstPoint.y = point->y;
+    } else if (firstButton != NULL && secondButton == NULL && widget != firstButton) {
+        secondButton = widget;
+        secondPoint.x = point->x;
+        secondPoint.y = point->y;
+
+        make_move(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+        firstButton = NULL;
+        secondButton = NULL;
+    }
+    redraw();
 //    gtk_button_set_label((GtkButton)widget, "C");
-    gtk_button_set_label(widget, "C");
-    GdkRGBA col = {1, 0, 0, 0};
-    gtk_widget_override_background_color(widget, GTK_STATE_PRELIGHT, &col);
+//    gtk_button_set_label(widget, "C");
+//    GdkRGBA col = {1, 0, 0, 0};
+//    gtk_widget_override_background_color(widget, GTK_STATE_PRELIGHT, &col);
 
 }
 
@@ -43,14 +76,14 @@ int gui_main(void) {
     gtk_container_add(GTK_CONTAINER(main_hbox), board);
 
     gint size = 50;
-
-    int candy[HEIGHT][WIDTH] = {{0}};
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            candy[i][j] = random_candy();
-
-        }
-    }
+//
+//    int candy[HEIGHT][WIDTH] = {{0}};
+//    for (int i = 0; i < HEIGHT; i++) {
+//        for (int j = 0; j < WIDTH; j++) {
+//            candy[i][j] = random_candy();
+//
+//        }
+//    }
 
 //    GdkRGBA color;
 //    color.red=127;
@@ -67,7 +100,7 @@ int gui_main(void) {
             points[i][j].y = j;
 
             char str[7];
-            sprintf(str, "%d", candy[i][j]);
+            sprintf(str, "%d", candies[i][j]);
 
 //            board_buttons[i][j] = gtk_color_button_new();
 //            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
@@ -109,6 +142,7 @@ int gui_main(void) {
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
+    redraw();
     gtk_widget_show_all(main_window);
     gtk_main();
 

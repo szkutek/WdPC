@@ -7,23 +7,25 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
-#define WIDTH 10
-#define HEIGHT 10
+#include "../types.h"
+#include "../model/model.h"
+
+
 //#define WIDTH 3
 //#define HEIGHT 2
 
 //void create_board(GtkWidget *widget){
 //}
 
+
+
 void button_clicked(GtkWidget *widget, gpointer data);
+
 //int random_candy();
 int gui_main();
 
 
-typedef struct {
-    int x;
-    int y;
-} Point;
+
 
 
 GtkWidget *main_window;
@@ -38,6 +40,8 @@ GtkWidget *lives_lbl;
 GtkWidget *lives;
 GtkWidget *score_lbl;
 GtkWidget *score;
+
+
 
 
 #endif
