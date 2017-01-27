@@ -93,6 +93,7 @@ CandyCount count_candies(int x, int y) {
     int c = candies[x][y].color;
 
     CandyCount count = {0, 0};
+    if (c==0) return count;
 
     int i = x, j = y;
 
@@ -129,12 +130,8 @@ CandyCount count_candies(int x, int y) {
 
 int check_one_candy(int x, int y) {
 
-//    if      (is_fig_T(x,y)) return 1;
-//    else if (is_fig_I(x,y)) return 1;
-//    else if (is_fig_L(x,y)) return 1;
-//    else if (is_fig_P(x,y)) return 1;
-//    else if (is_fig_H(x,y)) return 1;
-//    else if (is_fig_V(x,y)) return 1;
+//    CandyCount count = count_candies(x,y);
+//    if
 
 
 
@@ -143,7 +140,7 @@ int check_one_candy(int x, int y) {
     return 0;
 }
 
-int check_swap(int x1, int y1, int x2, int y2) {
+int check_swap(int x1, int y1, int x2, int y2, bool do_swap) {
 
 
     return 1;
@@ -160,7 +157,7 @@ int make_move(int x1, int y1, int x2, int y2) {
 //    int dir = swap_dir(x1,y1,x2,y2);
 
     if (swap_candy(x1, y1, x2, y2)) {
-        if (!check_swap(x1, y1, x2, y2)) {
+        if (!check_swap(x1, y1, x2, y2,false)) {
             undo_swap(x1, y1, x2, y2);
             return 0;
         }
