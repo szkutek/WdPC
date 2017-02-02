@@ -1,7 +1,5 @@
 
 #include "model.h"
-#include "../types.h"
-
 
 int random_candy() {
     return 1 + rand() % (6);
@@ -63,7 +61,7 @@ void clear_counted() {
 }
 
 CandyCount count_candies(Point p) {
-    clear_counted();
+
     int c = candies[p.x][p.y].color;
 
     CandyCount count = {0, 0};
@@ -177,20 +175,9 @@ void check_one_candy(Point p) {
         for (int i = 0; i < size.y; i++)
             destroy_candy(horizontal[i]);
     }
-
-
-    for (int i = 0; i < size.x; i++)
-        printf("[%d, %d], ", vertical[i].x, vertical[i].y);
-    puts("");
-    for (int i = 0; i < size.y; i++)
-        printf("[%d, %d], ", horizontal[i].x, horizontal[i].y);
-    puts("");
-    puts("");
-
 }
 
 int update_board(Point source, Point dest) {
-
 
     check_one_candy(source);
     check_one_candy(dest);
@@ -199,14 +186,12 @@ int update_board(Point source, Point dest) {
 }
 
 void fill_voids() {
-
-
     for (int j = 0; j < WIDTH; j++) {
 
         for (int i = 0; i < HEIGHT; i++) {
             if (candies[i][j].color == 0) {
 
-                for (int k = i; k > 0; k++) {
+                for (int k = i; k > 0; k--) {
                     candies[k][j].color = candies[k - 1][j].color;
                 }
                 candies[0][j].color = random_candy();
@@ -218,3 +203,8 @@ void fill_voids() {
 
 }
 
+void check_board(){
+
+
+
+}

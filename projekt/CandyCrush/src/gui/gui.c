@@ -97,7 +97,7 @@ void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
         firstButton = NULL;
         secondButton = NULL;
     }
-    redraw();
+    gint64 timer = g_timeout_add(500, (GSourceFunc) redraw, NULL);
 //    gtk_button_set_label((GtkButton)widget, "C");
 //    gtk_button_set_label(widget, "C");
 //    GdkRGBA col = {1, 0, 0, 0};

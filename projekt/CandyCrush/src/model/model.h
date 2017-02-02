@@ -8,6 +8,7 @@
 #include <math.h>
 
 #include "../types.h"
+//#include "../gui/gui.h"
 //
 //#define WIDTH 10
 //#define HEIGHT 10
@@ -39,5 +40,6 @@ int model_main();
 void destroy_candy(Point p);
 int update_board(Point source, Point dest);
 void fill_voids();
+void check_board();
 
 #endif
