@@ -1,5 +1,4 @@
 #include "gui.h"
-#include "../types.h"
 
 
 //void create_board(GtkWidget *widget){
@@ -10,32 +9,91 @@ GtkButton *secondButton = NULL;
 Point secondPoint;
 
 
+void init_colors() {
+    blank.alpha = 1.0;
+    blank.red = 0.933333;
+    blank.green = 0.933333;
+    blank.blue = 0.925490;
+
+    yellow.alpha = 1.0;
+    yellow.red = 1.0;
+    yellow.green = 1.0;
+    yellow.blue = 0.0;
+
+    red.alpha = 1.0;
+    red.red = 1.0;
+    red.green = 0.0;
+    red.blue = 0.0;
+
+    blue.alpha = 1.0;
+    blue.red = 0.0;
+    blue.green = 0.0;
+    blue.blue = 1.0;
+
+    green.alpha = 1.0;
+    green.red = 0.0;
+    green.green = 1.0;
+    green.blue = 0.0;
+
+    purple.alpha = 1.0;
+    purple.red = 184.0 / 255.0;
+    purple.green = 3.0 / 255.0;
+    purple.blue = 0.0;
+
+    orange.alpha = 1.0;
+    orange.red = 1.0;
+    orange.green = 165.0 / 255.0;
+    orange.blue = 0.0;
+
+}
+
+GdkRGBA get_color(int x) {
+    switch (x) {
+        case 0:
+            return blank;
+        case 1:
+            return yellow;
+        case 2:
+            return red;
+        case 3:
+            return green;
+        case 4:
+            return blue;
+        case 5:
+            return purple;
+        case 6:
+            return orange;
+    }
+}
+
 void redraw() {
+    GdkRGBA color;
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
 
-            char str[7];
-            sprintf(str, "%d", candies[i][j].color);
-            gtk_button_set_label(board_buttons[i][j], str);
+//            char str[7];
+//            sprintf(str, "%d", candies[i][j].color);
+//            gtk_button_set_label(board_buttons[i][j], str);
+            color = get_color(candies[i][j].color);
+            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
         }
     }
 }
 
 
-void button_clicked(GtkWidget *widget, gpointer data) {
+void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
     Point *point = (Point *) data;
-    printf("[%d, %d]\n", point->x, point->y);
 
     if (firstButton == NULL) {
-        firstButton = widget;
+        firstButton = (GtkButton *) widget;
         firstPoint.x = point->x;
         firstPoint.y = point->y;
-    } else if (firstButton != NULL && secondButton == NULL && widget != firstButton) {
-        secondButton = widget;
+    } else if (firstButton != NULL && secondButton == NULL && (GtkButton *) widget != firstButton) {
+        secondButton = (GtkButton *) widget;
         secondPoint.x = point->x;
         secondPoint.y = point->y;
 
-        make_move(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y);
+        check_swap(firstPoint, secondPoint, true);
         firstButton = NULL;
         secondButton = NULL;
     }
@@ -47,12 +105,9 @@ void button_clicked(GtkWidget *widget, gpointer data) {
 
 }
 
-//int random_candy() {
-//    return 1 + rand() % (6);
-//}
-
-
 int gui_main(void) {
+
+    init_colors();
 
     main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -69,13 +124,13 @@ int gui_main(void) {
     /** BOARD
     */
 
-    board = gtk_table_new(HEIGHT, WIDTH, TRUE);
+    board = gtk_table_new(HEIGHT, WIDTH, true);
     gtk_table_set_row_spacings(GTK_TABLE(board), 0);
     gtk_table_set_col_spacings(GTK_TABLE(board), 0);
 
     gtk_container_add(GTK_CONTAINER(main_hbox), board);
 
-    gint size = 50;
+    gint button_size = 50;
 //
 //    int candy[HEIGHT][WIDTH] = {{0}};
 //    for (int i = 0; i < HEIGHT; i++) {
@@ -85,12 +140,6 @@ int gui_main(void) {
 //        }
 //    }
 
-//    GdkRGBA color;
-//    color.red=127;
-//    color.green=22;
-//    color.blue=230;
-//    color.alpha=1.0;
-
     Point points[WIDTH][HEIGHT];
 
     for (int i = 0; i < HEIGHT; i++) {
@@ -99,19 +148,21 @@ int gui_main(void) {
             points[i][j].x = i;
             points[i][j].y = j;
 
-            char str[7];
-            sprintf(str, "%d", candies[i][j]);
-
+//            char str[7];
+//            sprintf(str, "%d", candies[i][j]);
 //            board_buttons[i][j] = gtk_color_button_new();
-//            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
 
-            board_buttons[i][j] = gtk_button_new_with_label(str);
-            gtk_table_attach_defaults(GTK_TABLE(board), board_buttons[i][j], j, j + 1, i, i + 1);
+            board_buttons[i][j] = gtk_color_button_new();
 
-            g_signal_connect(G_OBJECT(board_buttons[i][j]), "clicked",
+            GdkRGBA color = get_color(candies[i][j].color);
+            gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
+
+            g_signal_connect(G_OBJECT(board_buttons[i][j]), "button_press_event",
                              G_CALLBACK(button_clicked), (gpointer) &points[i][j]);
 
-            gtk_widget_set_size_request(board_buttons[i][j], size, size);
+            gtk_table_attach_defaults(GTK_TABLE(board), board_buttons[i][j], j, j + 1, i, i + 1);
+
+            gtk_widget_set_size_request(board_buttons[i][j], button_size, button_size);
         }
     }
 
@@ -130,14 +181,14 @@ int gui_main(void) {
 
     time_count = gtk_label_new("TIME");
     lives = gtk_label_new("LIVES");
-    score = gtk_label_new("SCORE");
+    score_show = gtk_label_new("SCORE");
 
     gtk_box_pack_start(GTK_BOX(menu), time_lbl, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), time_count, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), lives_lbl, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), lives, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), score_lbl, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(menu), score, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(menu), score_show, TRUE, TRUE, 0);
 
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);

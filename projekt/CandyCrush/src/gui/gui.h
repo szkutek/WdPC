@@ -11,21 +11,11 @@
 #include "../model/model.h"
 
 
-//#define WIDTH 3
-//#define HEIGHT 2
+void redraw();
 
-//void create_board(GtkWidget *widget){
-//}
+void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data);
 
-
-
-void button_clicked(GtkWidget *widget, gpointer data);
-
-//int random_candy();
 int gui_main();
-
-
-
 
 
 GtkWidget *main_window;
@@ -39,9 +29,15 @@ GtkWidget *time_count;
 GtkWidget *lives_lbl;
 GtkWidget *lives;
 GtkWidget *score_lbl;
-GtkWidget *score;
+GtkWidget *score_show;
 
-
+GdkRGBA blank;
+GdkRGBA yellow;
+GdkRGBA red;
+GdkRGBA blue;
+GdkRGBA green;
+GdkRGBA purple;
+GdkRGBA orange;
 
 
 #endif

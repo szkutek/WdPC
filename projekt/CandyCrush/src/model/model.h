@@ -14,26 +14,30 @@
 //#define WIDTH 3
 //#define HEIGHT 2
 
-
+int score;
 //int koniec_gry=0;
+
 Candy candies[HEIGHT][WIDTH];
+
 // counted candies
-int horizontal[WIDTH][2];
-int vertical[HEIGHT][2];
+Point horizontal[WIDTH];
+Point vertical[HEIGHT];
+
+CandyCount count_candies(Point p);
 
 
 int random_candy();
-
-int make_move(int x1, int y1, int x2, int y2);
-
+void draw_board();
+bool in_board(int x, int y);
+int neighbor_candy(Point source, Point dest);
+int swap_candy(Point source, Point dest);
+void clear_counted();
+CandyCount count_candies(Point p);
+void check_one_candy(Point p);
+int check_swap(Point source, Point dest, bool do_swap);
 int model_main();
-
-CandyCount count_candies(int x, int y);
-
-int is_fig_T(int x, int y);
-
-int is_fig_I(int x, int y);
-
-int is_fig_L(int x, int y);
+void destroy_candy(Point p);
+int update_board(Point source, Point dest);
+void fill_voids();
 
 #endif
