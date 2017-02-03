@@ -33,7 +33,7 @@ void init_colors() {
 
     green.alpha = 1.0;
     green.red = 0.0;
-    green.green = 1.0;
+    green.green = 204.0 / 255.0;
     green.blue = 0.0;
 
     purple.alpha = 1.0;
@@ -46,10 +46,69 @@ void init_colors() {
     orange.green = 128.0 / 255.0;
     orange.blue = 0.0;
 
+    color_bomb.alpha = 1.0;
+    color_bomb.red = 0.0;
+    color_bomb.green = 0.0;
+    color_bomb.blue = 0.0;
+
+    yellow_bomb.alpha = 1.0;
+    yellow_bomb.red = 204.0 / 255.0;
+    yellow_bomb.green = 204.0 / 255.0;
+    yellow_bomb.blue = 0.0;
+
+    red_bomb.alpha = 1.0;
+    red_bomb.red = 204.0 / 255.0;
+    red_bomb.green = 0.0;
+    red_bomb.blue = 0.0;
+
+    blue_bomb.alpha = 1.0;
+    blue_bomb.red = 0.0;
+    blue_bomb.green = 0.0;
+    blue_bomb.blue = 153.0 / 255.0;
+
+    green_bomb.alpha = 1.0;
+    green_bomb.red = 0.0;
+    green_bomb.green = 153.0 / 255.0;
+    green_bomb.blue = 0.0;
+
+    purple_bomb.alpha = 1.0;
+    purple_bomb.red = 153.0 / 255.0;
+    purple_bomb.green = 0.0;
+    purple_bomb.blue = 76.0 / 255.0;
+
+    orange_bomb.alpha = 1.0;
+    orange_bomb.red = 204.0 / 255.0;
+    orange_bomb.green = 102.0 / 255.0;
+    orange_bomb.blue = 0.0;
+
 }
 
-GdkRGBA get_color(int x) {
-    switch (x) {
+GdkRGBA normal_bomb(Candy candy) {
+    switch (candy.color) {
+        case 0:
+            return blank;
+        case 1:
+            return yellow_bomb;
+        case 2:
+            return red_bomb;
+        case 3:
+            return green_bomb;
+        case 4:
+            return blue_bomb;
+        case 5:
+            return purple_bomb;
+        case 6:
+            return orange_bomb;
+    }
+}
+
+GdkRGBA get_color(Candy candy) {
+    if (candy.special == 5)
+        return color_bomb;
+    if (candy.special == 3)
+        return normal_bomb(candy);
+
+    switch (candy.color) {
         case 0:
             return blank;
         case 1:
@@ -67,7 +126,6 @@ GdkRGBA get_color(int x) {
     }
 }
 
-
 void redraw() {
     GdkRGBA color;
     for (int i = 0; i < HEIGHT; i++) {
@@ -76,7 +134,7 @@ void redraw() {
 //            char str[7];
 //            sprintf(str, "%d", candies[i][j].color);
 //            gtk_button_set_label(board_buttons[i][j], str);
-            color = get_color(candies[i][j].color);
+            color = get_color(candies[i][j]);
             gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
         }
     }
@@ -154,7 +212,7 @@ int init_gui(void) {
 
             board_buttons[i][j] = gtk_color_button_new();
 
-            GdkRGBA color = get_color(candies[i][j].color);
+            GdkRGBA color = get_color(candies[i][j]);
             gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(board_buttons[i][j]), &color);
 
             g_signal_connect(G_OBJECT(board_buttons[i][j]), "button_press_event",

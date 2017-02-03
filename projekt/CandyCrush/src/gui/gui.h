@@ -40,6 +40,14 @@ GdkRGBA green;
 GdkRGBA purple;
 GdkRGBA orange;
 
+GdkRGBA color_bomb;
+GdkRGBA yellow_bomb;
+GdkRGBA red_bomb;
+GdkRGBA blue_bomb;
+GdkRGBA green_bomb;
+GdkRGBA purple_bomb;
+GdkRGBA orange_bomb;
+
 void end_game();
 
 GtkWidget *dialog_window;

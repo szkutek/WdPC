@@ -27,7 +27,7 @@ void draw_board() {
 }
 
 bool in_board(int x, int y) {
-    return (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT);
+    return (x >= 0 && x < HEIGHT && y >= 0 && y < WIDTH);
 }
 
 int neighbor_candy(Point source, Point dest) {
@@ -35,7 +35,7 @@ int neighbor_candy(Point source, Point dest) {
             in_board(dest.x, dest.y));
 }
 
-int swap_candy(Point source, Point dest) { //zmienia cukierki miejscami, jesli sa obok siebie
+bool swap_candy(Point source, Point dest) { //swaps candy if next to each other
     int pom_color;
     int pom_special;
     if (neighbor_candy(source, dest)) {
@@ -47,18 +47,8 @@ int swap_candy(Point source, Point dest) { //zmienia cukierki miejscami, jesli s
         candies[source.x][source.y].special = candies[dest.x][dest.y].special;
         candies[dest.x][dest.y].special = pom_special;
         return 1;
-    } else return 0;
-}
-
-void clear_counted() {
-    for (int i = 0; i < WIDTH; i++) {
-        horizontal[i].x = -1;
-        horizontal[i].y = -1;
-    }
-    for (int i = 0; i < HEIGHT; i++) {
-        vertical[i].x = -1;
-        vertical[i].y = -1;
-    }
+    } else
+        return 0;
 }
 
 CandyCount count_candies(Point p) {
@@ -147,7 +137,29 @@ int init_board() {
 }
 
 void destroy_candy(Point p) {
-    if (candies[p.x][p.y].color != 0) {
+    Point pom;
+
+    if (candies[p.x][p.y].special == 5) {
+        int pom_color = random_candy();
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                if (candies[i][j].color == pom_color) {
+                    pom.x = i;
+                    pom.y = j;
+                    destroy_candy(pom);
+                }
+            }
+        }
+    } else if (candies[p.x][p.y].special == 3) {
+        candies[p.x][p.y].special = 0;
+        for (int k = -1; k <= 1; k++)
+            for (int l = -1; l <= 1; l++) {
+                pom.x = p.x + k;
+                pom.y = p.y + l;
+                if (in_board(pom.x, pom.y))
+                    destroy_candy(pom);
+            }
+    } else if (candies[p.x][p.y].color != 0) {
         score++;
         candies[p.x][p.y].color = 0;
         candies[p.x][p.y].special = 0;
@@ -169,10 +181,10 @@ void check_one_candy(Point p) {
         res_color = candies[p.x][p.y].color;
 
         if (size.x == 4) {
-            res_special = 1;
+            res_special = 3;
             score += 2;
         } else if (size.x >= 5) {
-            res_special = 5;
+            res_special = 3;
             score += 5;
         }
 
@@ -180,10 +192,10 @@ void check_one_candy(Point p) {
         for (int i = 0; i < size.x; i++)
             destroy_candy(vertical[i]);
 
-//        if (size.x >= 4) {
-//            candies[p.x][p.y].color = res_color;
-//            candies[p.x][p.y].special = res_special;
-//        }
+        if (size.x >= 4) {
+            candies[p.x][p.y].color = res_color;
+            candies[p.x][p.y].special = res_special;
+        }
     }
 //    HORIZONTAL
     else if (size.x < 3 && size.y >= 3) {
@@ -191,10 +203,10 @@ void check_one_candy(Point p) {
         res_color = candies[p.x][p.y].color;
 
         if (size.y == 4) {
-            res_special = 2;
+            res_special = 3;
             score += 2;
         } else if (size.y >= 5) {
-            res_special = 5;
+            res_special = 3;
             score += 5;
         }
 
@@ -202,16 +214,16 @@ void check_one_candy(Point p) {
         for (int i = 0; i < size.y; i++)
             destroy_candy(horizontal[i]);
 
-//        if (size.y >= 4) {
-//            candies[p.x][p.y].color = res_color;
-//            candies[p.x][p.y].special = res_special;
-//        }
+        if (size.y >= 4) {
+            candies[p.x][p.y].color = res_color;
+            candies[p.x][p.y].special = res_special;
+        }
     }
 //    BOMB
     else if (size.x >= 3 && size.y >= 3) {
         res_special = 3;
         res_color = candies[p.x][p.y].color;
-        score+=3;
+        score += 3;
 
 //        destroy candies
         for (int i = 0; i < size.x; i++)
@@ -219,8 +231,8 @@ void check_one_candy(Point p) {
         for (int i = 0; i < size.y; i++)
             destroy_candy(horizontal[i]);
 
-//        candies[p.x][p.y].color = res_color;
-//        candies[p.x][p.y].special = res_special;
+        candies[p.x][p.y].color = res_color;
+        candies[p.x][p.y].special = res_special;
 
     }
 }
@@ -228,6 +240,7 @@ void check_one_candy(Point p) {
 int update_board(Point source, Point dest) {
 
     check_one_candy(source);
+    fill_voids();
     check_one_candy(dest);
     fill_voids();
 
