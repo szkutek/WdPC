@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "../types.h"
 
 
 //void create_board(GtkWidget *widget){
@@ -36,13 +37,13 @@ void init_colors() {
     green.blue = 0.0;
 
     purple.alpha = 1.0;
-    purple.red = 184.0 / 255.0;
-    purple.green = 3.0 / 255.0;
-    purple.blue = 0.0;
+    purple.red = 204.0 / 255.0;
+    purple.green = 0.0;
+    purple.blue = 102.0 / 255.0;
 
     orange.alpha = 1.0;
     orange.red = 1.0;
-    orange.green = 165.0 / 255.0;
+    orange.green = 128.0 / 255.0;
     orange.blue = 0.0;
 
 }
@@ -65,6 +66,7 @@ GdkRGBA get_color(int x) {
             return orange;
     }
 }
+
 
 void redraw() {
     GdkRGBA color;
@@ -96,12 +98,15 @@ void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
             secondPoint.x = point->x;
             secondPoint.y = point->y;
 
-            if (player_moves>0) {
+            if (player_moves > 0) {
                 check_swap(firstPoint, secondPoint, true);
                 firstButton = NULL;
                 secondButton = NULL;
-            } else
-                end_game();
+            }
+            if (player_moves == 0) {
+//                end_game();
+                puts("Game ended");
+            }
         }
     }
     gint64 timer = g_timeout_add(500, (GSourceFunc) redraw, NULL);
@@ -119,18 +124,14 @@ int init_gui(void) {
     main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     gtk_window_set_position(GTK_WINDOW(main_window), GTK_WIN_POS_CENTER);
-//    gtk_window_set_default_size(GTK_WINDOW(main_window), 230, 250);
     gtk_window_set_title(GTK_WINDOW(main_window), "Candy Crush");
     gtk_container_set_border_width(GTK_CONTAINER(main_window), 5);
 
     main_hbox = gtk_hbox_new(FALSE, 1);
     gtk_container_add(GTK_CONTAINER(main_window), main_hbox);
 
-
-
     /** BOARD
     */
-
     board = gtk_table_new(HEIGHT, WIDTH, true);
     gtk_table_set_row_spacings(GTK_TABLE(board), 0);
     gtk_table_set_col_spacings(GTK_TABLE(board), 0);
@@ -138,14 +139,6 @@ int init_gui(void) {
     gtk_container_add(GTK_CONTAINER(main_hbox), board);
 
     gint button_size = 50;
-//
-//    int candy[HEIGHT][WIDTH] = {{0}};
-//    for (int i = 0; i < HEIGHT; i++) {
-//        for (int j = 0; j < WIDTH; j++) {
-//            candy[i][j] = random_candy();
-//
-//        }
-//    }
 
     Point points[HEIGHT][WIDTH];
 
@@ -205,4 +198,38 @@ int init_gui(void) {
     gtk_main();
 
     return 0;
+}
+
+
+void show_play_again_dialog(GtkWidget *widget, gpointer window) {
+
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_YES_NO,
+                                    "Play again?");
+    gtk_window_set_title(GTK_WINDOW(dialog), "You scored some points.");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+void play_again_fun() {
+    play_again = true;
+}
+
+void end_game() {
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(GTK_WINDOW(main_window),
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_YES_NO,
+                                    "Play again?");
+    gtk_window_set_title(GTK_WINDOW(dialog), "You scored some points.");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+
+//    gtk_widget_destroy(dialog);
+
+    g_signal_connect(dialog, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_dialog_response(GTK_DIALOG(play_again_fun), GTK_RESPONSE_OK);
 }

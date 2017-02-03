@@ -1,5 +1,6 @@
 
 #include "model.h"
+#include "../types.h"
 
 int random_candy() {
     return 1 + rand() % (6);
@@ -166,17 +167,61 @@ void check_one_candy(Point p) {
     if (size.x >= 3 && size.y < 3) {
         res_special = 0;
         res_color = candies[p.x][p.y].color;
+
+        if (size.x == 4) {
+            res_special = 1;
+            score += 2;
+        } else if (size.x >= 5) {
+            res_special = 5;
+            score += 5;
+        }
+
 //        destroy candies
         for (int i = 0; i < size.x; i++)
             destroy_candy(vertical[i]);
+
+//        if (size.x >= 4) {
+//            candies[p.x][p.y].color = res_color;
+//            candies[p.x][p.y].special = res_special;
+//        }
     }
-        //    HORIZONTAL
+//    HORIZONTAL
     else if (size.x < 3 && size.y >= 3) {
         res_special = 0;
         res_color = candies[p.x][p.y].color;
+
+        if (size.y == 4) {
+            res_special = 2;
+            score += 2;
+        } else if (size.y >= 5) {
+            res_special = 5;
+            score += 5;
+        }
+
 //        destroy candies
         for (int i = 0; i < size.y; i++)
             destroy_candy(horizontal[i]);
+
+//        if (size.y >= 4) {
+//            candies[p.x][p.y].color = res_color;
+//            candies[p.x][p.y].special = res_special;
+//        }
+    }
+//    BOMB
+    else if (size.x >= 3 && size.y >= 3) {
+        res_special = 3;
+        res_color = candies[p.x][p.y].color;
+        score+=3;
+
+//        destroy candies
+        for (int i = 0; i < size.x; i++)
+            destroy_candy(vertical[i]);
+        for (int i = 0; i < size.y; i++)
+            destroy_candy(horizontal[i]);
+
+//        candies[p.x][p.y].color = res_color;
+//        candies[p.x][p.y].special = res_special;
+
     }
 }
 
@@ -225,6 +270,3 @@ void check_board() {
     }
 }
 
-void end_game(){
-
-}

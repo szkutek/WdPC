@@ -8,18 +8,10 @@
 #include <math.h>
 
 #include "../types.h"
-//#include "../gui/gui.h"
-//
-//#define WIDTH 10
-//#define HEIGHT 10
-//#define WIDTH 3
-//#define HEIGHT 2
-
 
 int player_moves;
 int score;
 bool flag;
-//int koniec_gry=0;
 
 Candy candies[HEIGHT][WIDTH];
 
@@ -44,6 +36,5 @@ void destroy_candy(Point p);
 int update_board(Point source, Point dest);
 void fill_voids();
 void check_board();
-void end_game();
 
 #endif
