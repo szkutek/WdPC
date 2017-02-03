@@ -10,8 +10,6 @@
 #include "../types.h"
 #include "../model/model.h"
 
-bool play_again;
-
 void redraw();
 
 void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data);
@@ -25,6 +23,8 @@ GtkWidget *menu;
 GtkWidget *board;
 GtkWidget *board_buttons[HEIGHT][WIDTH];
 GtkWidget *time_lbl;
+
+GtkWidget *dialog;
 
 GtkWidget *time_count;
 GtkWidget *lives_lbl;
@@ -50,9 +50,5 @@ GdkRGBA orange_bomb;
 
 void end_game();
 
-GtkWidget *dialog_window;
-GtkWidget *play_again_dialog;
-
-void show_play_again_dialog(GtkWidget *widget, gpointer window);
 
 #endif

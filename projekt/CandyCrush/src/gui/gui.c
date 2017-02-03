@@ -16,70 +16,70 @@ void init_colors() {
     blank.green = 0.933333;
     blank.blue = 0.925490;
 
-    yellow.alpha = 1.0;
-    yellow.red = 1.0;
-    yellow.green = 1.0;
-    yellow.blue = 0.0;
-
-    red.alpha = 1.0;
-    red.red = 1.0;
-    red.green = 0.0;
-    red.blue = 0.0;
-
-    blue.alpha = 1.0;
-    blue.red = 0.0;
-    blue.green = 0.0;
-    blue.blue = 1.0;
-
-    green.alpha = 1.0;
-    green.red = 0.0;
-    green.green = 204.0 / 255.0;
-    green.blue = 0.0;
-
-    purple.alpha = 1.0;
-    purple.red = 204.0 / 255.0;
-    purple.green = 0.0;
-    purple.blue = 102.0 / 255.0;
-
-    orange.alpha = 1.0;
-    orange.red = 1.0;
-    orange.green = 128.0 / 255.0;
-    orange.blue = 0.0;
-
-    color_bomb.alpha = 1.0;
-    color_bomb.red = 0.0;
-    color_bomb.green = 0.0;
-    color_bomb.blue = 0.0;
-
     yellow_bomb.alpha = 1.0;
-    yellow_bomb.red = 204.0 / 255.0;
-    yellow_bomb.green = 204.0 / 255.0;
+    yellow_bomb.red = 1.0;
+    yellow_bomb.green = 1.0;
     yellow_bomb.blue = 0.0;
 
     red_bomb.alpha = 1.0;
-    red_bomb.red = 204.0 / 255.0;
+    red_bomb.red = 1.0;
     red_bomb.green = 0.0;
     red_bomb.blue = 0.0;
 
     blue_bomb.alpha = 1.0;
     blue_bomb.red = 0.0;
     blue_bomb.green = 0.0;
-    blue_bomb.blue = 153.0 / 255.0;
+    blue_bomb.blue = 1.0;
 
     green_bomb.alpha = 1.0;
     green_bomb.red = 0.0;
-    green_bomb.green = 153.0 / 255.0;
+    green_bomb.green = 204.0 / 255.0;
     green_bomb.blue = 0.0;
 
     purple_bomb.alpha = 1.0;
-    purple_bomb.red = 153.0 / 255.0;
+    purple_bomb.red = 204.0 / 255.0;
     purple_bomb.green = 0.0;
-    purple_bomb.blue = 76.0 / 255.0;
+    purple_bomb.blue = 102.0 / 255.0;
 
     orange_bomb.alpha = 1.0;
-    orange_bomb.red = 204.0 / 255.0;
-    orange_bomb.green = 102.0 / 255.0;
+    orange_bomb.red = 1.0;
+    orange_bomb.green = 128.0 / 255.0;
     orange_bomb.blue = 0.0;
+
+    color_bomb.alpha = 1.0;
+    color_bomb.red = 0.0;
+    color_bomb.green = 0.0;
+    color_bomb.blue = 0.0;
+
+    yellow.alpha = 0.5;
+    yellow.red = 255.0 / 255.0;
+    yellow.green = 255.0 / 255.0;
+    yellow.blue = 153.0 / 255.0;
+
+    red.alpha = 0.5;
+    red.red = 255.0 / 255.0;
+    red.green = 102.0 / 255.0;
+    red.blue = 102.0 / 255.0;
+
+    blue.alpha = 0.5;
+    blue.red = 102.0 / 255.0;
+    blue.green = 102.0 / 255.0;
+    blue.blue = 153.0 / 255.0;
+
+    green.alpha = 0.5;
+    green.red = 102.0 / 255.0;
+    green.green = 255.0 / 255.0;
+    green.blue = 102.0 / 255.0;
+
+    purple.alpha = 0.1;
+    purple.red = 255.0 / 255.0;
+    purple.green = 102.0 / 255.0;
+    purple.blue = 178.0 / 255.0;
+
+    orange.alpha = 0.5;
+    orange.red = 255.0 / 255.0;
+    orange.green = 178.0 / 255.0;
+    orange.blue = 102.0 / 255.0;
 
 }
 
@@ -140,6 +140,15 @@ void redraw() {
     }
 }
 
+void change_labels() {
+    char str[7];
+
+    sprintf(str, "%d", player_moves);
+    gtk_entry_set_text(GTK_ENTRY(time_count), str);
+
+    sprintf(str, "%d", score);
+    gtk_entry_set_text(GTK_ENTRY(score_show), str);
+}
 
 void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
     Point *point = (Point *) data;
@@ -148,31 +157,23 @@ void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
         firstButton = (GtkButton *) widget;
         firstPoint.x = point->x;
         firstPoint.y = point->y;
-    } else if (firstButton != NULL && secondButton == NULL) {
-        if ((GtkButton *) widget == firstButton) {
-            firstButton = NULL;
-        } else {
-            secondButton = (GtkButton *) widget;
-            secondPoint.x = point->x;
-            secondPoint.y = point->y;
+    } else if (firstButton != NULL && secondButton == NULL && (GtkButton *) widget != firstButton) {
+        secondButton = (GtkButton *) widget;
+        secondPoint.x = point->x;
+        secondPoint.y = point->y;
 
-            if (player_moves > 0) {
-                check_swap(firstPoint, secondPoint, true);
-                firstButton = NULL;
-                secondButton = NULL;
-            }
-            if (player_moves == 0) {
-//                end_game();
-                puts("Game ended");
-            }
+        if (player_moves > 0) {
+            check_swap(firstPoint, secondPoint, true);
+            firstButton = NULL;
+            secondButton = NULL;
+        }
+        if (player_moves == 0) {
+            change_labels();
+            end_game();
         }
     }
+    change_labels();
     gint64 timer = g_timeout_add(500, (GSourceFunc) redraw, NULL);
-//    gtk_button_set_label((GtkButton)widget, "C");
-//    gtk_button_set_label(widget, "C");
-//    GdkRGBA col = {1, 0, 0, 0};
-//    gtk_widget_override_background_color(widget, GTK_STATE_PRELIGHT, &col);
-
 }
 
 int init_gui(void) {
@@ -206,10 +207,6 @@ int init_gui(void) {
             points[i][j].x = i;
             points[i][j].y = j;
 
-//            char str[7];
-//            sprintf(str, "%d", candies[i][j]);
-//            board_buttons[i][j] = gtk_color_button_new();
-
             board_buttons[i][j] = gtk_color_button_new();
 
             GdkRGBA color = get_color(candies[i][j]);
@@ -224,30 +221,29 @@ int init_gui(void) {
         }
     }
 
-
-
-
     /** MENU
     */
 
     menu = gtk_vbox_new(FALSE, 1);
     gtk_container_add(GTK_CONTAINER(main_hbox), menu);
 
-    time_lbl = gtk_label_new("TIME");
-    lives_lbl = gtk_label_new("LIVES");
+    time_lbl = gtk_label_new("MOVES LEFT");
     score_lbl = gtk_label_new("SCORE");
 
-    time_count = gtk_label_new("TIME");
-    lives = gtk_label_new("LIVES");
-    score_show = gtk_label_new("SCORE");
+    char str[7];
+    sprintf(str, "%d", MOVES_ALLOWED);
+
+    time_count = gtk_entry_new();
+    gtk_editable_set_editable(GTK_EDITABLE(time_count), FALSE);
+    gtk_entry_set_text(GTK_ENTRY(time_count), str);
+    score_show = gtk_entry_new();
+    gtk_editable_set_editable(GTK_EDITABLE(score_show), FALSE);
+    gtk_entry_set_text(GTK_ENTRY(score_show), "0");
 
     gtk_box_pack_start(GTK_BOX(menu), time_lbl, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), time_count, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(menu), lives_lbl, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(menu), lives, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), score_lbl, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(menu), score_show, TRUE, TRUE, 0);
-
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -258,36 +254,19 @@ int init_gui(void) {
     return 0;
 }
 
-
-void show_play_again_dialog(GtkWidget *widget, gpointer window) {
-
-    GtkWidget *dialog;
-    dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_QUESTION,
-                                    GTK_BUTTONS_YES_NO,
-                                    "Play again?");
-    gtk_window_set_title(GTK_WINDOW(dialog), "You scored some points.");
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
-
-void play_again_fun() {
-    play_again = true;
-}
-
 void end_game() {
-    GtkWidget *dialog;
-    dialog = gtk_message_dialog_new(GTK_WINDOW(main_window),
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_QUESTION,
-                                    GTK_BUTTONS_YES_NO,
-                                    "Play again?");
-    gtk_window_set_title(GTK_WINDOW(dialog), "You scored some points.");
+    dialog = gtk_dialog_new_with_buttons("Game over",
+                                         GTK_WINDOW(main_window),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT,
+                                         "Play again",
+                                         GTK_RESPONSE_NONE, NULL);
+
+
+    gtk_widget_set_size_request(dialog, 200, 100);
+    g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
+    gtk_widget_show_all(dialog);
     gtk_dialog_run(GTK_DIALOG(dialog));
-
-//    gtk_widget_destroy(dialog);
-
-    g_signal_connect(dialog, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    gtk_dialog_response(GTK_DIALOG(play_again_fun), GTK_RESPONSE_OK);
+    restart();
+    redraw();
+    change_labels();
 }

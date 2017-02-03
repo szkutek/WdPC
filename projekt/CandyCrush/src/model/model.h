@@ -27,7 +27,6 @@ void draw_board();
 bool in_board(int x, int y);
 int neighbor_candy(Point source, Point dest);
 bool swap_candy(Point source, Point dest);
-void clear_counted();
 CandyCount count_candies(Point p);
 void check_one_candy(Point p);
 int check_swap(Point source, Point dest, bool do_swap);
@@ -36,5 +35,6 @@ void destroy_candy(Point p);
 int update_board(Point source, Point dest);
 void fill_voids();
 void check_board();
+void restart();
 
 #endif

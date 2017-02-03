@@ -1,6 +1,5 @@
 
 #include "model.h"
-#include "../types.h"
 
 int random_candy() {
     return 1 + rand() % (6);
@@ -132,6 +131,8 @@ int init_board() {
         check_board();
         fill_voids();
     }
+    score = 0;
+    player_moves = MOVES_ALLOWED;
 
     return 0;
 }
@@ -160,10 +161,9 @@ void destroy_candy(Point p) {
                     destroy_candy(pom);
             }
     } else if (candies[p.x][p.y].color != 0) {
-        score++;
         candies[p.x][p.y].color = 0;
         candies[p.x][p.y].special = 0;
-
+        score++;
     }
 }
 
@@ -260,6 +260,7 @@ void fill_voids() {
 
                 for (int k = i; k > 0; k--) {
                     candies[k][j].color = candies[k - 1][j].color;
+                    candies[k][j].special = candies[k - 1][j].special;
                 }
                 candies[0][j].color = random_candy();
                 candies[0][j].special = 0;
@@ -283,3 +284,7 @@ void check_board() {
     }
 }
 
+void restart() {
+
+    init_board();
+}
