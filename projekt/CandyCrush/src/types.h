@@ -4,6 +4,8 @@
 #define WIDTH 10
 #define HEIGHT 10
 
+#define MOVES_ALLOWED 10
+
 typedef struct {
     int x;
     int y;

@@ -15,7 +15,10 @@
 //#define WIDTH 3
 //#define HEIGHT 2
 
+
+int player_moves;
 int score;
+bool flag;
 //int koniec_gry=0;
 
 Candy candies[HEIGHT][WIDTH];
@@ -36,10 +39,11 @@ void clear_counted();
 CandyCount count_candies(Point p);
 void check_one_candy(Point p);
 int check_swap(Point source, Point dest, bool do_swap);
-int model_main();
+int init_board();
 void destroy_candy(Point p);
 int update_board(Point source, Point dest);
 void fill_voids();
 void check_board();
+void end_game();
 
 #endif

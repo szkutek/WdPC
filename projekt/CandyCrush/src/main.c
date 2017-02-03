@@ -4,11 +4,14 @@
 
 int main(int argc, char *argv[]) {
 
-    score = 0;
     srand(time(NULL));
-    model_main();
+
+    score = 0;
+    player_moves = MOVES_ALLOWED;
+
+    init_board();
     gtk_init(&argc, &argv);
-    gui_main();
+    init_gui();
 
 
     return 0;

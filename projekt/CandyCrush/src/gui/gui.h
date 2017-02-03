@@ -15,7 +15,7 @@ void redraw();
 
 void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data);
 
-int gui_main();
+int init_gui();
 
 
 GtkWidget *main_window;

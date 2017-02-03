@@ -115,19 +115,19 @@ int check_swap(Point source, Point dest, bool do_swap) {
 
     if (swapable && do_swap) {
         update_board(source, dest);
+        player_moves--;
         return true;
     } else if (swapable && !do_swap) {
-        swap_candy(source, dest);
+        swap_candy(source, dest); // undo swap
         return true;
     } else {
-        swap_candy(source, dest);
+        swap_candy(source, dest); // undo swap
         return false;
     }
 }
 
-int model_main() {
+int init_board() {
 
-    //init board
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             candies[i][j].color = random_candy();
@@ -135,10 +135,13 @@ int model_main() {
         }
     }
 
-//    while (!koniec_gry) {
-//        draw_board();
-//        make_move();
-//    }
+    flag = true;
+    while (flag) {
+        flag = false;
+        check_board();
+        fill_voids();
+    }
+
     return 0;
 }
 
@@ -183,6 +186,12 @@ int update_board(Point source, Point dest) {
     check_one_candy(dest);
     fill_voids();
 
+    flag = true;
+    while (flag) {
+        flag = false;
+        check_board();
+        fill_voids();
+    }
 }
 
 void fill_voids() {
@@ -196,6 +205,8 @@ void fill_voids() {
                 }
                 candies[0][j].color = random_candy();
                 candies[0][j].special = 0;
+
+                flag = true;
             }
         }
     }
@@ -203,8 +214,17 @@ void fill_voids() {
 
 }
 
-void check_board(){
+void check_board() {
+    Point p;
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            p.x = i;
+            p.y = j;
+            check_one_candy(p);
+        }
+    }
+}
 
-
+void end_game(){
 
 }

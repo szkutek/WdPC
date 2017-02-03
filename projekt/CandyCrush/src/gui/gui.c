@@ -88,14 +88,21 @@ void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
         firstButton = (GtkButton *) widget;
         firstPoint.x = point->x;
         firstPoint.y = point->y;
-    } else if (firstButton != NULL && secondButton == NULL && (GtkButton *) widget != firstButton) {
-        secondButton = (GtkButton *) widget;
-        secondPoint.x = point->x;
-        secondPoint.y = point->y;
+    } else if (firstButton != NULL && secondButton == NULL) {
+        if ((GtkButton *) widget == firstButton) {
+            firstButton = NULL;
+        } else {
+            secondButton = (GtkButton *) widget;
+            secondPoint.x = point->x;
+            secondPoint.y = point->y;
 
-        check_swap(firstPoint, secondPoint, true);
-        firstButton = NULL;
-        secondButton = NULL;
+            if (player_moves>0) {
+                check_swap(firstPoint, secondPoint, true);
+                firstButton = NULL;
+                secondButton = NULL;
+            } else
+                end_game();
+        }
     }
     gint64 timer = g_timeout_add(500, (GSourceFunc) redraw, NULL);
 //    gtk_button_set_label((GtkButton)widget, "C");
@@ -105,7 +112,7 @@ void button_clicked(GtkWidget *widget, GdkEvent *event, gpointer data) {
 
 }
 
-int gui_main(void) {
+int init_gui(void) {
 
     init_colors();
 
@@ -140,7 +147,7 @@ int gui_main(void) {
 //        }
 //    }
 
-    Point points[WIDTH][HEIGHT];
+    Point points[HEIGHT][WIDTH];
 
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
